@@ -1,0 +1,19 @@
+.compact-sidebar .brand{min-height:78px;gap:13px;font-size:18px}
+.compact-sidebar .brand-logo{width:58px;height:58px;flex:none}
+.auth-hero .brand{font-size:22px;gap:16px}
+.auth-hero .brand-logo{width:68px;height:68px}
+.login-logo{width:112px;height:112px;margin:0 auto 20px}
+.auth-card>h2,.auth-card>p{text-align:center}
+.jira-card{border-radius:12px}
+.quick-edit{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:11px;padding:9px;border-radius:9px;background:linear-gradient(135deg,#f3f8ff,#f4fffc);border:1px solid #e1ebf5}
+.quick-edit label{display:grid;gap:3px;min-width:0}
+.quick-edit label>span{font-size:9px;font-weight:750;color:#5a7291}
+.quick-edit .date-field{grid-column:1/-1}
+.quick-edit form{max-width:none!important}
+.quick-edit .input{width:100%;padding:6px 7px;border-radius:7px;font-size:10px;background:#fff;border-color:#cddced}
+.quick-edit .input:hover{border-color:#89bdf8}
+.quick-edit .input:focus{border-color:var(--cgr-cyan);box-shadow:0 0 0 2px #159cff18}
+.card-labels{min-height:22px}
+.jira-card footer{margin-top:8px}
+.assignee{color:#315374;font-weight:650}
+@media(max-width:700px){.compact-sidebar .brand-logo{width:48px;height:48px}.login-logo{width:94px;height:94px}}

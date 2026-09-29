@@ -1,0 +1,15 @@
+import Database from "better-sqlite3";
+import { randomBytes, scryptSync } from "node:crypto";
+const db=new Database(process.env.DATABASE_PATH||"./data/is-takip.db");
+db.pragma("foreign_keys=ON");
+db.exec("CREATE TABLE IF NOT EXISTS project_members (project_id INTEGER NOT NULL REFERENCES projects(id) ON DELETE CASCADE, user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE, PRIMARY KEY(project_id,user_id))");
+const hash=(password)=>{const salt=randomBytes(16).toString("hex");return `${salt}:${scryptSync(password,salt,64).toString("hex")}`};
+const meyekaPassword=process.env.MEYEKA_PASSWORD;
+const cgrPassword=process.env.CGR_PASSWORD;
+if(!meyekaPassword||!cgrPassword)throw new Error("MEYEKA_PASSWORD ve CGR_PASSWORD çevre değişkenleri gerekli.");
+const users=[{name:"meyeka",email:"meyeka@cgr.local",password:meyekaPassword},{name:"cgr",email:"cgr@cgr.local",password:cgrPassword}];
+const upsert=db.prepare("INSERT INTO users(name,email,password_hash) VALUES(?,?,?) ON CONFLICT(email) DO UPDATE SET name=excluded.name,password_hash=excluded.password_hash");
+const get=db.prepare("SELECT id FROM users WHERE email=?");
+db.transaction(()=>{db.prepare("DELETE FROM users WHERE email IN ('meyeka@ispusulasi.local','cgr@ispusulasi.local')").run();for(const user of users)upsert.run(user.name,user.email,hash(user.password));db.prepare("UPDATE tasks SET assignee=CASE WHEN id % 2=0 THEN 'meyeka' ELSE 'cgr' END WHERE assignee NOT IN ('meyeka','cgr')").run();const projects=db.prepare("SELECT id FROM projects").all();const addMember=db.prepare("INSERT OR IGNORE INTO project_members(project_id,user_id) VALUES(?,?)");for(const user of users){const {id}=get.get(user.email);for(const project of projects)addMember.run(project.id,id)}})();
+db.close();
+console.log("meyeka ve cgr kullanıcıları ile ortak proje erişimi hazır.");

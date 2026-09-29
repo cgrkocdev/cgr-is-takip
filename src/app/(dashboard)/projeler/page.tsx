@@ -1,0 +1,7 @@
+import Link from "next/link";
+import { FolderKanban } from "lucide-react";
+import { NewProjectButton } from "@/components/forms";
+import { requireUser } from "@/lib/auth";
+import { getProjects } from "@/lib/db";
+import { progress } from "@/lib/types";
+export default async function Projects(){const user=await requireUser(),projects=getProjects(user.id);return <><div className="page-head"><div><h1>Projeler</h1><div className="subtle">Tüm çalışmalarınızın ilerlemesini tek bakışta izleyin.</div></div><NewProjectButton/></div>{projects.length?<div className="grid project-grid">{projects.map(p=><Link href={`/projeler/${p.id}`} className="card project-card" style={{"--project-color":p.color} as React.CSSProperties} key={p.id}><div className="section-title"><h3>{p.name}</h3><span className="badge">{p.status}</span></div><p className="subtle" style={{minHeight:42}}>{p.description||"Açıklama eklenmemiş."}</p><div className="progressbar"><i style={{width:`${progress(p)}%`}}/></div><div className="meta"><b>{progress(p)}%</b><span>{p.completed_tasks}/{p.total_tasks} iş</span>{p.target_date&&<span>Hedef: {new Intl.DateTimeFormat("tr-TR",{day:"numeric",month:"short",year:"numeric"}).format(new Date(p.target_date+"T12:00:00"))}</span>}{p.is_sample===1&&<span className="badge sample">Örnek veri</span>}</div></Link>)}</div>:<div className="card empty"><FolderKanban size={40} style={{margin:"auto"}}/><h2>Henüz proje yok</h2><p>İlk projenizi oluşturarak işleri düzenlemeye başlayın.</p><NewProjectButton/></div>}</>}

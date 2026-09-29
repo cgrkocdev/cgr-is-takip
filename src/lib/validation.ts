@@ -1,0 +1,4 @@
+import { z } from "zod";
+import { ASSIGNEES, PRIORITIES, PROJECT_STATUSES, STATUSES } from "./types";
+export const projectSchema=z.object({name:z.string().trim().min(2,"Proje adı en az 2 karakter olmalı."),description:z.string().trim().max(500),target_date:z.string().optional(),status:z.enum(PROJECT_STATUSES),color:z.string().regex(/^#[0-9a-f]{6}$/i)});
+export const taskSchema=z.object({project_id:z.coerce.number().int().positive(),title:z.string().trim().min(2,"Başlık en az 2 karakter olmalı."),description:z.string().trim().max(2000),notes:z.string().trim().max(2000),assignee:z.enum(ASSIGNEES),start_date:z.string().optional(),due_date:z.string().optional(),status:z.enum(STATUSES),priority:z.enum(PRIORITIES),dependency_id:z.union([z.coerce.number().int().positive(),z.literal("")]).optional()});
